@@ -1,0 +1,8 @@
+ndoc is a simple php documentation generator.
+
+It's purpose is to allow writing documentation in a template style as you would
+a typical static website and compile it into static html layouts for 
+distribution.
+
+ndoc is currently in development and should not be used in a production 
+environment.
