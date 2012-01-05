@@ -69,9 +69,6 @@
  *  parsed this is done to allow for simple linking within and between pages.
  */
 
-define('NDOC_VERSION', 'v0.0.1');
-define('NDOC_MASTERMIND', 'Nickolas Whiting');
-
 $usage = "usage: ndoc [options...]
 
 Options:
@@ -80,6 +77,7 @@ Options:
   -o/--output   Directory to store generated documentation.
   -s/--source   Source directory to scan for doc files.
   -v/--version  Display ndoc version.
+  -x/--hidden   Scan hidden files and directories. DEFAULT=OFF
 ";
 
 if (count($argv) == 1) {
@@ -87,8 +85,8 @@ if (count($argv) == 1) {
 }
 
 // Compiles the given pages into a documentation format
-$args = getopt('b:hvo:s:', array(
-    'help', 'version', 'base:', 'output:', 'source:'
+$args = getopt('b:hvo:s:x', array(
+    'help', 'version', 'base:', 'output:', 'source:', 'hidden'
 ));
 
 foreach ($args as $_opt => $_val) {
@@ -111,9 +109,23 @@ foreach ($args as $_opt => $_val) {
             break;
         case 'v':
         case 'version':
-            exit('ndoc ' . NDOC_VERSION . PHP_EOL);
+            $version = true;
+            break;
+        case 'x':
+        case 'hidden':
+            define('NDOC_HIDDEN', true);
             break;
     }
+}
+
+// INCLUDE LIBRARY
+// INCLUDE LIBRARY
+$ncwd = dirname(realpath(__FILE__));
+require_once $ncwd.'/../lib/ndoc.php';
+
+// VERSION OUTPUT
+if (isset($version)) {
+    exit('ndoc ' . NDOC_VERSION . PHP_EOL);
 }
 
 if (!isset($basefile)) {
@@ -139,3 +151,5 @@ if (!is_dir($source) || !is_readable($source)) {
 if (!is_dir($output) && !mkdir($output) || !is_writeable($output)) {
     exit("Output directory cannot be written to or found".PHP_EOL.$usage);
 }
+
+$ndoc = new ndoc($source, $basefile, $output);
