@@ -6,3 +6,49 @@ distribution.
 
 ndoc is currently in development and should not be used in a production 
 environment.
+
+The doc generator works using a Chapter based generation.
+
+Note the info below is subject to change!
+
+Each root level folder is represented as a Chapter each sub folder
+within is represented as a section continuing in infinitity, each
+file within a section and chapter is considered a page.
+
+A visual representation would be ...
+
+chapter_title
+    |- section_title
+        |- another section
+            |- section_nested_page
+        |-  section_page
+    |- another_page
+
+ndoc would produce
+
+1 ) Chapter_Title
+    1.1 ) Section_Title
+        1.1.1 ) Another_Section
+           1.1.1.1 ) Section_Nested_Page
+        1.1.2 ) Section_page
+    1.2 ) Another_Page
+
+etc..etc..
+
+Pages can be combined by simply appending a unqiue identifier
+followed by a ___ to files.
+
+Example:
+
+chapter_title
+    |- a___page_one
+    |- a___page_two
+
+ndoc would produce
+
+1 ) Chapter_Title
+    1.1 ) page_one & page_two
+
+When generating docs ndoc does not analyze the content of pages
+this is to allow page content to take any form. The content of pages is
+parsed to allow for simple linking within and between pages.

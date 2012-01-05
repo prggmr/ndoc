@@ -21,6 +21,54 @@
  * @copyright  Copyright (c), 2010-12 Nickolas Whiting
  */
 
+/**
+ * The doc generator works using a Chapter based generation.
+ *
+ * Note the info below is subject to change!
+ *
+ * Each root level folder is represented as a Chapter each sub folder
+ * within is represented as a section continuing in infinitity, each
+ * file within a section and chapter is considered a page.
+ *
+ * A visual representation would be ...
+ *
+ * chapter_title
+ *  |- section_title
+ *      |- another section
+ *          |- section_nested_page
+ *      |-  section_page
+ *  |- another_page
+ *
+ *  ndoc would produce
+ *
+ *  1 ) Chapter_Title
+ *      1.1 ) Section_Title
+ *          1.1.1 ) Another_Section
+ *             1.1.1.1 ) Section_Nested_Page
+ *          1.1.2 ) Section_page
+ *      1.2 ) Another_Page
+ *
+ *  etc..etc..
+ *
+ *  Pages can be combined by simply appending a unqiue identifier
+ *  followed by a ___ to files.
+ *
+ *  Example given:
+ *
+ *  chapter_title
+ *      |- a___page_one
+ *      |- a___page_two
+ *
+ *  ndoc would produce
+ *
+ *  1 ) Chapter_Title
+ *      1.1 ) page_one & page_two
+ *
+ *  When generating the docs ndoc does not analyze the content of pages
+ *  this is to allow page content to take any form. The content of pages is
+ *  parsed this is done to allow for simple linking within and between pages.
+ */
+
 define('NDOC_VERSION', 'v0.0.1');
 define('NDOC_MASTERMIND', 'Nickolas Whiting');
 
@@ -28,8 +76,9 @@ $usage = "usage: ndoc [options...]
 
 Options:
   -b/--base     Base file to compile documentation against.
-  -d/--dir      Directory where doc templates are stored.
   -h/--help     Shows this message.
+  -o/--output   Directory to store generated documentation.
+  -s/--source   Source directory to scan for doc files.
   -v/--version  Display ndoc version.
 ";
 
@@ -38,22 +87,27 @@ if (count($argv) == 1) {
 }
 
 // Compiles the given pages into a documentation format
-$args = getopt('b:d:hv', array(
-    'help', 'version', 'base:', 'dir:'
+$args = getopt('b:hvo:s:', array(
+    'help', 'version', 'base:', 'output:', 'source:'
 ));
+
 foreach ($args as $_opt => $_val) {
     switch ($_opt) {
         case 'b':
         case 'base':
             $basefile = $_val;
             break;
-        case 'd':
-        case 'dir':
-            $directory = $_val;
+        case 's':
+        case 'source':
+            $source = $_val;
             break;
         case 'h':
         case 'help':
             exit($usage);
+            break;
+        case 'o':
+        case 'output':
+            $output = $_val;
             break;
         case 'v':
         case 'version':
@@ -62,11 +116,26 @@ foreach ($args as $_opt => $_val) {
     }
 }
 
+if (!isset($basefile)) {
+    $basefile = 'index.php';
+}
+
+if (!isset($source)) {
+    $source = 'docs';
+}
+
+if (!isset($output)) {
+    $output = 'output';
+}
+
 if (!file_exists($basefile) || !is_readable($basefile)) {
-    exit("Base file cannot be read or found!".PHP_EOL.$usage);
+    exit("Base ($basefile) file cannot be read or found!".PHP_EOL.$usage);
 }
 
-if (!is_dir($directory) || !is_readable($directory)) {
-    exit("Directory cannot be read or found!".PHP_EOL.$usage);
+if (!is_dir($source) || !is_readable($source)) {
+    exit("Source directory cannot be read or found!".PHP_EOL.$usage);
 }
 
+if (!is_dir($output) && !mkdir($output) || !is_writeable($output)) {
+    exit("Output directory cannot be written to or found".PHP_EOL.$usage);
+}
