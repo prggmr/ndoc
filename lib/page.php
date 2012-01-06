@@ -32,5 +32,4 @@ class Page extends Node {
     {
         return true;
     }
-    
 }

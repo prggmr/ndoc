@@ -73,4 +73,13 @@ abstract class Node {
         return false;
     }
     
+    /**
+     * Returns the source of the node.
+     *
+     * @return  string
+     */
+    public function getSource()
+    {
+        return $this->_source;
+    }
 }

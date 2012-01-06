@@ -47,7 +47,6 @@ class Chapter extends Node {
      */
     public function __construct($source)
     {
-        echo "In Chapter : ".$source.PHP_EOL;
         parent::__construct($source);
         // setup pages and section stacks
         $this->_pages = new \ArrayObject();
@@ -76,6 +75,7 @@ class Chapter extends Node {
      */
     public function addSection(Section $source)
     {
+        fire(Signals::NEW_SECTION, array($source, $this));
         $this->_sections->append($source);
     }
 
@@ -89,6 +89,27 @@ class Chapter extends Node {
      */
     public function addPage(Page $source)
     {
+        fire(Signals::NEW_PAGE, array($source, $this));
         $this->_pages->append($source);
+    }
+    
+    /**
+     * Returns the sections.
+     *
+     * @return  object  ArrayObject
+     */
+    public function getSections()
+    {
+        return $this->_sections;
+    }
+    
+    /**
+     * Returns the pages.
+     *
+     * @return  object  ArrayObject
+     */
+    public function getPages()
+    {
+        return $this->_pages;
     }
 }

@@ -28,4 +28,8 @@ class Signals {
     const START = 0xD001;
     const END   = 0xD002;
     const INDEX = 0XD003;
+    const NEW_CHAPTER = 0xD004;
+    const NEW_SECTION = 0xD005;
+    const NEW_PAGE = 0xD006;
+    const INDEX_GENERATION = 0xD007;
 }

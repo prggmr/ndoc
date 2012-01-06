@@ -45,6 +45,7 @@ require_once $ndocpath.'/node.php';
 require_once $ndocpath.'/chapter.php';
 require_once $ndocpath.'/section.php';
 require_once $ndocpath.'/page.php';
+require_once $ndocpath.'/renderer.php';
 
 if (!defined('NDOC_HIDDEN')) {
     define('NDOC_HIDDEN', false);
@@ -120,7 +121,18 @@ final class ndoc {
      */
     public function addChapter($chapter)
     {
+        fire(\ndoc\Signals::NEW_CHAPTER, array($chapter, $this));
         $this->_chapters->append($chapter);
+    }
+    
+    /**
+     * Returns the doc chapters.
+     *
+     * @return  object  ArrayObject
+     */
+    public function getChapters()
+    {
+        return $this->_chapters;
     }
     
     /**
@@ -141,6 +153,7 @@ final class ndoc {
         foreach ($iterator as $_node) {
             // Are hidden files included?
             if (substr($_node->getFileName(), 0, 1) === '.' && NDOC_HIDDEN === false) continue;
+            fire(\ndoc\Signals::INDEX, array($_node, $type));
             switch ($type) {
                 // The chapter scan
                 // This is peformed only once
@@ -152,7 +165,6 @@ final class ndoc {
                 // Section scans are performed on each new chapter/section
                 case ndoc::SECTION:
                 default:
-                    echo $_node . ' ' . var_dump($_node->isDir()) . PHP_EOL;
                     if ($_node->isDir()) {
                         $object->addSection(new \ndoc\Section($_node));
                     } else {
