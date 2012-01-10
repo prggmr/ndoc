@@ -20,18 +20,12 @@
  * @copyright  Copyright (c), 2010-12 Nickolas Whiting
  */
  
-// This is a little ugly
 $ndocpath = dirname(realpath(__FILE__));
-if (!class_exists('prggmr')) {
-    if (strlen(file_get_contents('prggmr/lib/prggmr.php', true, null, 10, 1)) == 0) {
-        exit('prggmr is required please check if prggmr is on your include path:
-'.get_include_path().PHP_EOL.'
-To install prggmr'.PHP_EOL.'
-cd '.end(explode(':', get_include_path())).' && sudo git clone git://github.com/prggmrlabs/prggmr.git'.PHP_EOL
-            );
-    }
-    require_once 'prggmr/lib/prggmr.php';
+if (is_dir('/usr/lib/prggmrlabs')) {
+    set_include_path('/usr/lib/prggmrlabs' . PATH_SEPARATOR . get_include_path());
 }
+
+require_once 'prggmr/lib/prggmr.php';
 
 if (!version_compare(\prggmr::version(), '0.2.1', '<=')) {
     exit('ndoc requires prggmr v0.2.1'.PHP_EOL);
@@ -46,6 +40,10 @@ require_once $ndocpath.'/chapter.php';
 require_once $ndocpath.'/section.php';
 require_once $ndocpath.'/page.php';
 require_once $ndocpath.'/renderer.php';
+require_once $ndocpath.'/templates.php';
+require_once $ndocpath.'/output.php';
+require_once $ndocpath.'/output/php.php';
+require_once $ndocpath.'/vendor/michelf/markdown.php';
 
 if (!defined('NDOC_HIDDEN')) {
     define('NDOC_HIDDEN', false);
@@ -71,18 +69,11 @@ final class ndoc {
     protected $_source = null;
     
     /**
-     * Base file used for generating pages.
-     *
-     * @param  string
-     */
-    protected $_basefile = null;
-    
-    /**
-     * Directory where docs will be generated.
+     * ndoc Parsed settings
      * 
-     * @param  string
+     * @param  array
      */
-    protected $_output = null;
+    protected $_doc_settings = null;
     
     /**
      * ndoc Chapter and Section constants
@@ -95,17 +86,27 @@ final class ndoc {
      *
      * @param  string  $source  Directory where doc files are stored.
      * @param  string  $basefile  Base file used for generating pages.
-     * @param  string  $output  Directory to output generated documentation.
+     * 
      */
-    public function __construct($source, $basefile, $output)
+    public function __construct($source)
     {
-        $this->_source = $source;
-        $this->_basefile = $basefile;
-        $this->_output = $output;
+        $this->_source = rtrim($source, '/').'/';
         $this->_chapters = new \ArrayObject();
         
+        if (!file_exists($this->_source.'settings.php')) {
+            throw new \ndoc\Rendering_Exception(sprintf(
+                "Could not locate the settings file. Please verify the file exists
+                at %s",
+                $this->_source.'settings.php'
+            ));
+        }
+        
+        include $this->_source.'settings.php';
+        
+        $this->_doc_settings = $__NDOC_SETTINGS;
+        
         fire(\ndoc\Signals::START, array(
-            $this->_source, $this->_basefile, $this->_output
+            $this->_source, $this->_doc_settings
         ));
         
         // Perform the chapter index
@@ -172,6 +173,16 @@ final class ndoc {
                     }
                     break;
             }
-        }    
+        }
+    }
+    
+    /**
+     * Returns settings used for current doc parser.
+     *
+     * @return  array
+     */
+    public function getSettings()
+    {
+        return $this->_doc_settings;
     }
 }

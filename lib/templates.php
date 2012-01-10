@@ -17,21 +17,21 @@ namespace ndoc;
  *
  *
  * @author  Nickolas Whiting  <prggmr@gmail.com>
- * @package  ndoc
+ * @package  prggmrunit
  * @copyright  Copyright (c), 2010-12 Nickolas Whiting
  */
 
 /**
- * Events signals.
+ * Template definition class.
+ *
+ * This class soley defines the templates used when generating the docs.
+ * 
+ * The definitions DO NOT define the locations of the templates this is up to
+ * the output generation object.
  */
-class Signals {
-    const START = 0xD000;
-    const END   = 0xD001;
-    const INDEX = 0XD002;
-    const NEW_CHAPTER = 0xD003;
-    const NEW_SECTION = 0xD004;
-    const NEW_PAGE = 0xD005;
-    const INDEX_GENERATION = 0xD006;
-    const DOC_GENERATE = 0xD007;
-    const DOC_PARSE = 0xD008;
+class Templates {
+    const BASE = 0xD0000;
+    const CHAPTER = 0xD0001;
+    const SECTION = 0xD0002;
+    const PAGE = 0xD0003; 
 }
