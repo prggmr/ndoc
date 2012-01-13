@@ -34,4 +34,5 @@ class Signals {
     const INDEX_GENERATION = 0xD006;
     const DOC_GENERATE = 0xD007;
     const DOC_PARSE = 0xD008;
+    const GENERATE_CHAPTER = 0xD009;
 }

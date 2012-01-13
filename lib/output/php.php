@@ -56,9 +56,16 @@ class PHP
     protected $_theme_storage = null;
     
     /**
+     * Extension used when generating files.
+     *
+     * @var  string
+     */
+    public $file_extension = '.html';
+    
+    /**
      * Constructs a new PHP template generator, this simply
      * sets up all subscribers for template rendering which are signaled
-     * by the output generator.
+     * by the output generator and renderer.
      *
      * @return  void
      */
@@ -77,9 +84,14 @@ class PHP
         # Saves a parsed template to the specified source location
         # this expects the template var to contain the already parsed
         # content.
-        subscribe(function($event, $template, $source){
+        $extension = $this->file_extension;
+        subscribe(function($event, $template, $source) use ($extension){
             $source = explode('.', $source);
-            file_put_contents($source[0].'.html', $template);
+            // Generate the file only if it does not exist 
+            // this is to allow chapter and section templates to generate first
+            if (!file_exists($source[0].$extension)) {
+                file_put_contents($source[0].$extension, $template);
+            }
             return true;
         }, \ndoc\Signals::DOC_GENERATE, 'PHP Output Generator');
         
@@ -98,5 +110,10 @@ class PHP
             ob_end_clean();
             return true;
         }, \ndoc\Signals::DOC_PARSE, 'PHP Output Parser');
+        
+        # Generates a new chapter this only creates the directory!
+        subscribe(function($event, $directory, $chapter){
+            @mkdir($directory.$chapter);
+        }, \ndoc\Signals::GENERATE_CHAPTER);
     }
 }

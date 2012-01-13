@@ -39,7 +39,7 @@ require_once $ndocpath.'/node.php';
 require_once $ndocpath.'/chapter.php';
 require_once $ndocpath.'/section.php';
 require_once $ndocpath.'/page.php';
-require_once $ndocpath.'/renderer.php';
+require_once $ndocpath.'/indexer.php';
 require_once $ndocpath.'/templates.php';
 require_once $ndocpath.'/output.php';
 require_once $ndocpath.'/output/php.php';
@@ -179,10 +179,15 @@ final class ndoc {
     /**
      * Returns settings used for current doc parser.
      *
+     * @param  string  $setting  Setting name to retrieve
+     *
      * @return  array
      */
-    public function getSettings()
+    public function getSettings($setting = null)
     {
-        return $this->_doc_settings;
+        if (null === $setting || !isset($this->_doc_settings[$setting])) {
+            return $this->_doc_settings;
+        }
+        return $this->_doc_settings[$setting];
     }
 }

@@ -75,7 +75,6 @@ $usage = "usage: ndoc [options...] source output
 Options:
   -f/--format   Output format. DEFAULT=html
   -h/--help     Shows this message.
-  -t/--theme    Theme to use when generating the docs.
   -v/--version  Display ndoc version.
   -x/--hidden   Scan hidden files and directories. DEFAULT=OFF
 ";
@@ -172,14 +171,12 @@ if (!is_dir($output_dir) && !mkdir($output_dir) ||
     exit("Output directory cannot be written to or found".PHP_EOL.$usage);
 }
 
-$renderer = new \ndoc\Renderer(
-    new ndoc(getcwd().'/'.$source), 
-    getcwd().'/'.$output_dir
+$indexer = new \ndoc\Indexer(
+    new ndoc(getcwd().'/'.$source)
 );
-$renderer->generate(new \ndoc\Output($format));
+$output = new \ndoc\Output(new ndoc(getcwd().'/'.$source), $format, $output_dir);
+$output->generate();
 
-
-$index = $renderer->getIndex();
 function bookIndex($array, $parent = null, $section = null) {
     $chapter_number = 1;
     $section_number = 1;
