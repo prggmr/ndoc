@@ -20,7 +20,6 @@
  * @copyright  Copyright (c), 2010-12 Nickolas Whiting
  */
  
-$ndocpath = dirname(realpath(__FILE__));
 if (is_dir('/usr/lib/prggmrlabs')) {
     set_include_path('/usr/lib/prggmrlabs' . PATH_SEPARATOR . get_include_path());
 }
@@ -33,17 +32,17 @@ if (!version_compare(\prggmr::version(), '0.2.1', '<=')) {
 
 define('NDOC_VERSION', 'v0.0.1');
 define('NDOC_MASTERMIND', 'Nickolas Whiting');
+define('NDOC_PATH', dirname(realpath(__FILE__)));
 
-require_once $ndocpath.'/signals.php';
-require_once $ndocpath.'/node.php';
-require_once $ndocpath.'/chapter.php';
-require_once $ndocpath.'/section.php';
-require_once $ndocpath.'/page.php';
-require_once $ndocpath.'/indexer.php';
-require_once $ndocpath.'/templates.php';
-require_once $ndocpath.'/output.php';
-require_once $ndocpath.'/output/php.php';
-require_once $ndocpath.'/vendor/michelf/markdown.php';
+require_once NDOC_PATH.'/signals.php';
+require_once NDOC_PATH.'/node.php';
+require_once NDOC_PATH.'/chapter.php';
+require_once NDOC_PATH.'/section.php';
+require_once NDOC_PATH.'/page.php';
+require_once NDOC_PATH.'/templates.php';
+require_once NDOC_PATH.'/output.php';
+require_once NDOC_PATH.'/output/html.php';
+require_once NDOC_PATH.'/vendor/michelf/markdown.php';
 
 if (!defined('NDOC_HIDDEN')) {
     define('NDOC_HIDDEN', false);
